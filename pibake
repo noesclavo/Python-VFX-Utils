@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+import os
+import sys
+import subprocess
+import signal
+
+DD ='/bin/dd'
+
+def handler(signum, frame):
+    pass
+
+if (len(sys.argv) < 3):
+    print "Usage: pibake infile outfile"
+    sys.exit()
+
+inf = "if=%s" % sys.argv[1]
+outf = "of=%s" % sys.argv[2]
+
+cmd = [DD, 'bs=4m', inf, outf, 'conv=sync']
+
+dd = subprocess.Popen(cmd)
+pid = dd.pid
+
+print pid
+print dd.poll()
+
+while dd.poll() is None:
+    k = "kill -s INFO %i" % int(pid)
+    os.system(k)

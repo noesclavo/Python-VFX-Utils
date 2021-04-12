@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import os
+import re
+import argparse
+
+
+class Sanitize(object):
+    def __init__(self, args):
+        self.badchars = [' ', '#', '@']
+        self.files = args.files
+
+        self.clean()
+
+    def clean(self):
+        for file in self.files:
+            fh = open(file)
+            for line in fh.read().splitlines():
+                filename = re.sub('\s+$', '', line).lower()
+                filename = re.sub('|'.join(self.badchars), '_', filename)
+
+                try:
+                    os.mkdir(filename, 0o777)
+                except OSError as e:
+                    print('Error: creating directory {0} : {1}'.format(filename, e))
+
+
+            fh.close()
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--files', help='Clean up File Names.', nargs='+', action='extend')
+args = parser.parse_args();
+
+Sanitize(args)
+

@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import readline
+
+JOBS_DIR = '/mnt/storage/jobs'
+TMP = '/var/tmp'
+PFILE = os.path.join(TMP, '.pfile')
+
+class Completer(object):
+
+    def __init__(self, options):
+        self.options = sorted(options)
+
+    def complete(self, text, state):
+        self.matches = [ s for s in self.options if s and s.startswith(text) ]
+        if state < len(self.matches):
+            return self.matches[state]
+        else:
+            return None
+
+
+class Misc(object):
+
+    def __init__(self):
+        pass
+
+    def ls(self, directory):
+        item_list = []
+
+        for item in os.listdir(directory):
+            if not item.startswith('.'):
+                item_list.append(item)
+
+        return item_list
+
+    def f_list(self, the_list):
+        print('\n'.join(the_list))
+
+
+class Jobs(object):
+
+    def __init__(self):
+        self.m = Misc()
+        self.jobs_dir = JOBS_DIR
+        self.pfile = PFILE
+        self.jobs = None
+
+    def get_jobs(self):
+        self.jobs = self.m.ls(self.jobs_dir)
+        self.m.f_list(self.jobs)
+
+    def job_setup(self):
+        self.job_dir = os.path.join(self.jobs_dir, self.job_name)
+        postings = os.path.join(self.job_dir, 'postings')
+
+        fh = open(self.pfile, 'w+')
+        fh.write(f'export JOB_NAME={self.job_name}\n')
+        fh.write(f'export JOB_DIR={self.job_dir}\n')
+        fh.write(f'export JOB_POSTINGS={postings}')
+        fh.close()
+
+if __name__ == '__main__':
+    j = Jobs()
+    j.get_jobs()
+
+    completer = Completer(j.jobs)
+    readline.parse_and_bind('tab: complete')
+    readline.set_completer(completer.complete)
+
+    j.job_name = input('» ')
+    j.job_setup()
+
+
+
+

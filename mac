@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+import subprocess
+import re
+
+ifconfig = ['ifconfig', '-u', '-a']
+
+if_ret = subprocess.Popen(ifconfig, stdout=subprocess.PIPE).communicate()[0]
+if_ret = re.sub("(?m)\n\t", " ", if_ret)
+
+r = re.compile("(?mxi) (^\S+): .* \tether\s ([a-z0-9:]+)")
+m = r.findall(if_ret)
+
+for i in m:
+	print i[0], i[1]
+

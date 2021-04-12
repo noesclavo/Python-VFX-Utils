@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+class Convert(object):
+    def __init__(self, args):
+        self.files = args.files
+        self.width = 1
+        self.height = 1
+
+    def convert(self):
+        import ffmpeg
+        import os
+
+        for file in self.files:
+            outfile = '{}.mp4'.format(os.path.splitext(file)[0])
+
+            height = -1
+            width = -1
+            print('Executing ffmpeg.probe({})'.format(file))
+            probe = ffmpeg.probe(file)
+            for stream in probe['streams']:
+                if stream['codec_type'] == 'video':
+                    width = stream['width']
+                    height = stream['height']
+
+            width *= .5
+            height *= .5
+            size = '{0}:{1}'.format(int(width), int(height))
+
+            input = ffmpeg.input(file, loglevel=0)
+            audio = input.audio
+            video = input.video.filter(
+                'scale', size=size
+            )
+
+            ffmpeg.output(video, audio, outfile,
+                vcodec='libx264',
+                crf=20,
+                preset='slower',
+                pix_fmt='yuv420p',
+            ).overwrite_output().run()
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('files', help='Video files to be converted..', nargs='+', action='extend')
+
+    c = Convert(parser.parse_args())
+    c.convert()
+

@@ -1,0 +1,140 @@
+#!/usr/local/bin/python3
+
+import sys
+import os
+import argparse
+import re
+
+from wand.image import Image as img
+from wand.color import Color
+from wand.display import display
+from wand.drawing import Drawing
+
+FONT = '/var/tmp/HelveticaNeueLTStd-Roman.otf'
+
+
+class Slate():
+    def __init__(self, fmt):
+        self.fmt = os.path.basename(fmt)
+        self.dir = os.path.abspath(fmt)
+        self.get_files()
+
+        self.fmt = Formats(fmt).slate_format
+
+        self.width = self.fmt['width']
+        self.height = self.fmt['height']
+
+        self.make_black_frame()
+        self.make_slate()
+
+    def get_files(self):
+        self.files = []
+        for file in os.listdir(self.fmt):
+            if re.search('.txt$', file):
+                self.files.append(os.path.join(self.fmt, file))
+
+    def make_black_frame(self):
+        self.black = img(
+            width = self.width,
+            height = self.height,
+            background = Color('black'),
+        )
+
+        self.black.alpha_channel = True
+        self.black.format = 'png'
+
+    def make_slate(self):
+        for txtfile in self.files:
+            isci = txtfile.split('.')[0]
+            filename = '{}.png'.format(isci)
+
+            fh = open(txtfile, 'r')
+            text = fh.read()
+            fh.close()
+
+            slate = self.black.clone()
+            with Drawing() as draw:
+                draw.font = FONT
+                draw.fill_color = Color('white')
+                draw.font_size = self.fmt['font_size']
+                draw.text_interline_spacing = self.fmt['line_spacing']
+                draw.text(self.fmt['x'], self.fmt['y'], str(text))
+                draw(slate)
+
+            slate.save(filename=filename)
+
+
+class Formats(object):
+    def __init__(self, fmt):
+        slate_format = {}
+
+        slate_format['16x9'] =  {
+            'width' : int(1920),
+            'height' : int(1080),
+            'font_size' : int(30),
+            'line_spacing' : int(23),
+            'x' : int(500),
+            'y' : int(208),
+        }
+
+        slate_format['4x3'] =  {
+            'width' : int(1920),
+            'height' : int(1080),
+            'font_size' : int(30),
+            'line_spacing' : int(23),
+            'x' : int(500),
+            'y' : int(208),
+        }
+
+        slate_format['SD'] =  {
+            'width' : int(1920),
+            'height' : int(1080),
+            'font_size' : int(30),
+            'line_spacing' : int(23),
+            'x' : int(500),
+            'y' : int(208),
+        }
+
+        slate_format['9x16'] = {
+            'width' : int(1080),
+            'height' : int(1920),
+            'font_size' : 20.00,
+            'line_spacing' : 17,
+            'x' : 200,
+            'y' : 752,
+        }
+
+        slate_format['1x1'] = {
+            'width' : int(1080),
+            'height' : int(1080),
+            'font_size' : 22,
+            'line_spacing' : 31,
+            'x' : 226,
+            'y' : 206,
+        }
+
+        slate_format['4x5'] = {
+            'width' : int(1080),
+            'height' : int(1350),
+            'font_size' : 20,
+            'line_spacing' : 17,
+            'x' : 204,
+            'y' : 467,
+        }
+
+        slate_format[fmt]['res'] = '{}x{}'.format(
+            slate_format[fmt]['width'],
+            slate_format[fmt]['height']
+        )
+
+        self.slate_format = slate_format[fmt]
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('folder', help='folder(s) with plain text files containing ordered slate information, one slate per file.', nargs='+')
+args = parser.parse_args();
+
+for folder in args.folder:
+    folder = re.sub('/$', '', folder)
+    Slate(folder)
+

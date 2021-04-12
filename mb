@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+
+import pickle
+import os
+import sys
+import subprocess
+import argparse
+import re
+
+A_DIR = '/opt/Autodesk'
+EXEC = 'bin/shader_builder -m'
+HOME = os.path.expanduser('~')
+
+def get_flames():
+    versions = []
+    for dir in os.listdir(A_DIR):
+        if re.match('flame.*', dir):
+            versions.append(dir)
+
+    return sorted(versions)
+
+#parser = argparse.ArgumentParser()
+#parser.add_argument('glsl', help='GLSL files to complile.', action='store')
+#args = parser.parse_args();
+
+flames = get_flames()
+
+version = flames[-1]
+
+mb = os.path.join(A_DIR, version, EXEC)
+
+cmd =  "%s %s" % (mb, ' '.join(sys.argv[1:]))
+
+mb = subprocess.Popen(cmd.split())
+mb.wait()
+print
+

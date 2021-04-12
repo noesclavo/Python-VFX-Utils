@@ -1,0 +1,65 @@
+#!/usr/bin/python
+
+import os
+import sys
+import subprocess
+import argparse
+import re
+
+A_DIR = '/opt/Autodesk'
+EXEC = 'bin/startApplication'
+HOME = os.path.expanduser('~')
+HOOKS = "%s/Dropbox/flame-python" % HOME
+DEBUG = 'DL_DEBUG_PYTHON_HOOKS=0'
+
+
+os.environ['DL_PYTHON_HOOK_PATH'] = HOOKS
+
+def get_flames():
+    versions = []
+    for dir in os.listdir(A_DIR):
+        if re.match('flame.*', dir):
+            if not args.beta:
+                if not re.search('pr', dir):
+                    versions.append(dir)
+            else:
+                versions.append(dir)
+
+    return sorted(versions)
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-v', '--version', help='Version of flame to use.', action='store')
+parser.add_argument('-e', '--execute', help='Launch Flame.', action='store_true')
+parser.add_argument('-b', '--beta', help='Include Beta Versions.', action='store_true')
+parser.add_argument('-l', '--list', help='List Installed Versions.', action='store_true')
+args = parser.parse_args();
+
+flames = get_flames()
+if args.list:
+    for v in flames:
+        print v
+
+    sys.exit()      
+
+version = flames[-1]
+if args.version != None:
+    version = flames[-(int(args.version) + 1)]
+
+
+#flame = "%s --closed-libs" % os.path.join(A_DIR, version, EXEC) 
+#if version_number < 2021.2:
+flame = "%s" % os.path.join(A_DIR, version, EXEC) 
+
+print
+print flame
+print
+
+if args.execute:
+    import subprocess
+    from time import sleep
+    sleep(1)
+
+    f = subprocess.Popen(flame.split())
+    f.wait()
+    sys.exit()
+

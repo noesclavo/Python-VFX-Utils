@@ -1,0 +1,48 @@
+#!/usr/local/bin/python3
+
+import gspread
+from gspread_formatting import *
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+
+
+def main():
+    gc = gspread.service_account(filename='credentials.json')
+    wks = gc.open('test').sheet1
+    fmt = {
+        'backgroundColor': {
+            'red':.3,
+            'green':.3,
+            'blue':.3
+        }
+    }
+
+    sheet_id = wks._properties['sheetId']
+
+    body = {
+        "requests": [
+            {
+                "updateDimensionProperties": {
+                    "range": {
+                        "sheetId": sheet_id,
+                        "dimension":"COLUMNS",
+                        "startIndex":0,
+                        "endIndex":1
+                    },
+                    "properties": {
+                        "pixelSize":100
+                    },
+                    "fields":"pixelSize"
+                }
+            }
+        ]
+    }
+    
+    #wks.format('A', fmt)
+    wks.batch_update(body)
+    #wks.update_acell('B1', '=IMAGE("https://www.dropbox.com/s/yvwx8liou1xjwt2/husband.jpg?dl=1")')
+
+
+if __name__ == '__main__':
+    main()
+

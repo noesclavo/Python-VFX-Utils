@@ -1,0 +1,127 @@
+#!/usr/local/bin/python3
+
+import os
+import sys
+import argparse
+
+class Cat(object):
+    def __init__(self):
+        self.cols = [
+            'agency',
+            'client',
+            'product',
+            'title',
+            'isci',
+            'duration',
+            'audio',
+            'date',
+            'format',
+            'copywrite',
+            'extra'
+        ]
+
+
+class SlateInfo(object):
+    def __init__(self, args):
+        import re
+        import datetime
+        import pandas as pd
+
+        xlsx_file = os.path.abspath(args.xlsx)
+        product = args.product
+        extra = args.extra
+
+        wb = pd.ExcelFile(xlsx_file)
+        ws = wb.sheet_names[0]
+        df = wb.parse(ws, header=None)
+
+        # Get rid of any columns that have an empty values.
+        # Must do the columns before rows.
+        df.dropna(axis='columns', how='all', inplace=True)
+        df.dropna(axis='rows', thresh=3, inplace=True)
+        df.dropna(axis='columns', thresh=2, inplace=True)
+
+        cols = len(df.columns)
+
+        df.columns = Cat().cols[0:cols]
+
+        for index,row in df.iterrows():
+            #if re.match(r'duration', row['duration'], re.IGNORECASE):
+                #continue
+
+            if not re.search(r'{}'.format(product), row['product'],
+                             re.IGNORECASE):
+                continue
+
+            dir_format = row['format']
+            if re.match(r'hd', row['format'], re.IGNORECASE):
+                dir_format = '16x9'
+
+            dirname = False
+            dirname = self.mkdir(dir_format)
+            if not dirname:
+                continue
+
+            dirname = os.path.abspath(dirname)
+
+            # Added switch to pick between ISCI and title for edit names
+            # Defaults to ISCI
+            slate_filename = '{}.txt'.format(row['isci'])
+            if (args.title) or re.match(r'NFA', slate_filename, re.IGNORECASE):
+                slate_filename = '{}.txt'.format(row['title'])
+
+            slate_filepath = os.path.join(
+                dirname,
+                slate_filename
+            )
+
+            fh = None
+
+            try:
+                fh = open(slate_filepath, 'w')
+                print('{}{}{}'.format('\033[93m', slate_filepath, '\033[0m'))
+            except:
+                print('Error creating file: {}'.format(slate_filepath))
+                return
+
+            for i in df.columns:
+                value = row[i]
+                if isinstance(value, datetime.datetime):
+                    value = value.strftime('%m/%d/%Y')
+
+                print('{} -> {}'.format(i, value))
+                try:
+                    fh.write('{}\n'.format(value))
+                except:
+                    print('Error writing {} to file: {}'.format(value, slate_filepath))
+
+            if extra:
+                fh.write(extra)
+
+            fh.close()
+            print()
+
+    def mkdir(self, dirname):
+        if not os.path.isdir(dirname):
+            print('Creating directory: {} ...'.format(dirname))
+            try:
+                os.mkdir(dirname, 0o777)
+                return dirname
+            except:
+                print('Error creating directory: {} ...'.format(os.path.abspath(dirname)))
+                return False
+        else:
+            return dirname
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-x', '--xlsx', help='Spreadsheet.xlsx file containing slate information.', action='store', required=True)
+    parser.add_argument('-p', '--product', help='Project name or pattern.', action='store', required=True)
+    parser.add_argument('-e', '--extra', help='Extra text at bottom of the slate.', action='store')
+    parser.add_argument('-t', '--title', help='Use title as slate name, not ISCI.', default=False, action='store_true', required=False)
+
+    args = parser.parse_args();
+
+    SlateInfo(args)
+

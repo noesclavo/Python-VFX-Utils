@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+
+import subprocess
+import sys
+import os
+import argparse
+
+CONV='/opt/local/bin/convert'
+
+class Slate():
+    def __init__(self, fmt, files):
+        self.format = fmt
+        self.files = files
+        self.formats = {
+            '16x9' : {'res' : '1920x1080', 'ps' : '40', 'ls' : '15', 'geo' : '+500+160'},
+            '9x16' : {'res' : '1080x1920', 'ps' : '23', 'ls' : '14.25',  'geo' : '+200+714'},
+            '1x1' : {'res' : '1080x1080', 'ps' : '40', 'ls' : '15', 'geo' : '+250+160'},
+            '4x5' : {'res' : '1080, 1350', 'ps' : '40', 'ls' : '15', 'geo' : '+300+10'},
+        }
+
+        self.make_black_frame()
+        self.make_slate()
+
+    def make_black_frame(self):
+        cmd = "%s -size %s xc:black /var/tmp/black.png" % (CONV, self.formats[self.format]['res'])
+        cmd = cmd.split()
+        subprocess.Popen(cmd)
+
+
+    def make_slate(self):
+        for txt in self.files:
+            isci = txt.split('.')[0]
+
+            slate = "%s.png" % isci
+            tmp = "%s_tmp.png" % isci
+
+            res = self.formats[self.format]['res']
+            line_spacing = self.formats[self.format]['ls']
+            point_size = self.formats[self.format]['ps']
+            geo = self.formats[self.format]['geo']
+
+            cat = subprocess.Popen(['cat', txt], stdout=subprocess.PIPE)
+
+            conv = "%s -background black -fill white -density 72 -font /var/tmp/HelveticaNeueLTStd-Roman.otf -interline-spacing %s -pointsize %s -page %s+10+10 text:- -flatten %s" % (CONV, line_spacing, point_size, res, tmp)
+            subprocess.check_output(conv.split(), stdin=cat.stdout)
+            cat.wait()
+
+            tmp = os.path.abspath(tmp)
+            cexec = "composite -compose Screen -geometry %s %s /var/tmp/black.png %s" % (geo, tmp, slate)
+            try:
+                comp = subprocess.Popen(cexec.split())
+                comp.wait()
+            except:
+                print cexec
+
+            os.unlink(tmp)
+
+            #test the slate placement
+            #composite -compose Screen HUPD0034000H.png parliament_slate_1x1_direct.tif slate.png
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('format', choices=['16x9', '9x16', '1x1', '4x5'], help='Exceptable formats are 16x9, 9x16, 1x1, and 4x5.')
+#parser.add_argument('type', choices=['direct', 'agency'], help='Exceptable types are direct and agency')
+parser.add_argument('files', help='Plain text files containing ordered slate information, one slate per file.', nargs='+')
+args = parser.parse_args();
+
+Slate(args.format, args.files)
+

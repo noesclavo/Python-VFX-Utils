@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+
+
+import m_lib.misc
+import sys
+from time import sleep
+import os
+import subprocess
+
+from watchdog.observers import Observer
+from watchdog.events import (FileSystemEventHandler, PatternMatchingEventHandler)
+
+m = m_lib.misc.Misc()
+
+class Watch(object):
+
+    def __init__(self, path):
+        self.path = os.path.normpath(path)
+        self.pid = os.getpid()
+        self.name = os.path.normpath(__file__)
+
+    def run(self):
+        self.observer = Observer()
+
+        event_handler = Handler(self.path)
+        self.observer.schedule(event_handler, self.path, recursive=True)
+        self.observer.start()
+
+        file_size = -1
+
+        try:
+            while True:
+                sleep(1)
+        except KeyboardInterrupt:
+            self.observer.stop()
+            print('\nObserver killed: {} [{}]'.format(self.name, self.pid))
+        except:
+            self.observer.stop()
+            print("Observer Stopped")
+
+        self.observer.join()
+
+
+class Handler(PatternMatchingEventHandler):
+
+    def __init__(self, path):
+        #super(Handler, self).__init__(ignore_patterns=['*.mp4'])
+        super(Handler, self).__init__()
+        self.path = path
+
+    def on_created(self, event):
+        date = m.miles_date()
+        m.mkdir(date)
+
+        file_size = -1
+
+        while file_size < os.path.getsize(self.path):
+            file_size = os.path.getsize(self.path)
+            sleep(1)
+
+        dl_dir = os.path.join(self.path, date, os.path.basename(event.src_path))
+
+        try:
+            print(f'{event.src_path} --> {dl_dir}')
+            os.rename(event.src_path, dl_dir)
+        except OSError as e:
+            print("OS Error error({0}): {1}".format(e.errno, e.strerror))
+            raise
+        except IOError as e:
+            print("I/O Error error({0}): {1}".format(e.errno, e.strerror))
+            raise
+        except:
+            print('Unknown Error: Moving {} to {}'.format(event.src_path, dl_dir))
+            raise
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--path', help='Directory to watch..', action='store', required=True)
+    args = parser.parse_args()
+
+    path = os.path.normpath(os.path.abspath(args.path))
+
+
+    watch = Watch(path)
+    watch.run()

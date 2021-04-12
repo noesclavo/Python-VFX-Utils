@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+
+import os
+import re
+import argparse
+from watchdog.observers import Observer
+from watchdog.events import (FileSystemEventHandler, PatternMatchingEventHandler)
+from time import sleep
+
+RSYNC = '/usr/bin/rsync'
+RARGS = '-vcr'
+SEQ = '/mnt/storage/jobs/hyundai_211065/sequences/HYN'
+RX = None
+
+class Watch:
+
+    def __init__(self, path, syncfile):
+        self.path = path
+        self.syncfile = syncfile
+        self.pid = os.getpid()
+        self.name = os.path.normpath(__file__)
+        self.project_root = os.path.dirname(os.path.abspath(self.syncfile))
+
+    def run(self):
+        self.observer = Observer()
+
+        event_handler = Handler(self.regex, self.project_root)
+        self.observer.schedule(event_handler, self.path, recursive=True)
+        self.observer.start()
+
+        file_size = -1
+
+        try:
+            while True:
+                sleep(1)
+        except KeyboardInterrupt:
+            self.observer.stop()
+            print('\nObserver killed: {} [{}]'.format(self.name, self.pid))
+        except IOError as e:
+            self.observer.stop()
+            print(f'Observer Stopped: {e.args[1]}')
+
+        self.observer.join()
+
+    def get_sync_patterns(self):
+        fh = open(self.syncfile, 'r')
+        self.regex = re.sub(r'\n', '|', fh.read())
+        self.regex = re.sub('\|$', '', self.regex)
+        fh.close()
+
+
+class Handler(PatternMatchingEventHandler):
+
+    def __init__(self, regex, project_root):
+        super(Handler, self).__init__(ignore_patterns=['*.mp4'])
+
+        self.regex = regex
+        self.project_root = project_root
+        self.project = os.path.basename(self.project_root)
+
+    def on_created(self, event):
+        import subprocess
+        print('root', self.project_root)
+        path = event.src_path
+        if re.search((self.regex), path):
+            d = f'{self.project_root}/'
+            dest = os.path.join(self.project_root, path.split(d)[-1])
+            print('dest', dest)
+            cmd = ['cp', '-rv', path, dest]
+            print(cmd)
+            #cp = subprocess.check_output(cmd, universal_newlines=False)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--path', help='Directory to watch.', action='store', required=True)
+    parser.add_argument('-f', '--syncfile', help='File listing directories to watch.', action='store', required=True)
+    args = parser.parse_args()
+
+    path = os.path.normpath(os.path.abspath(args.path))
+
+    watch = Watch(path, args.syncfile)
+    watch.get_sync_patterns()
+    watch.run()

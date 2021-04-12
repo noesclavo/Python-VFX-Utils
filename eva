@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+import time
+import datetime
+
+future =  datetime.datetime.now() + datetime.timedelta(days=32)
+future = future.date().strftime("%m/%d/%Y")
+
+
+driver = webdriver.Chrome()
+#driver = webdriver.PhantomJS()
+
+
+url0 = 'https://clients.mindbodyonline.com/classic/mainclass?studioid=7164&tg=&vt=&lvl=&stype=-7&view=week&trn=0&page=&catid=&prodid=&date=2%2f25%2f2020&classid=0&prodGroupId=&sSU=&optForwardingLink=&qParam=&justloggedin=&nLgIn=&pMode=0&loc=3' 
+
+
+
+driver.implicitly_wait(30)
+driver.get(url0)
+
+username = driver.find_element_by_xpath('//*[@id="requiredtxtUserName"]')
+username.send_keys('spam@noesclavo.com')
+
+password = driver.find_element_by_xpath('//*[@id="requiredtxtPassword"]')
+password.send_keys('1m3c61L@t3$')
+
+
+button = driver.find_element_by_xpath('//*[@id="btnLogin"]')
+button.click()
+
+driver.get(url0)
+time.sleep(2)
+
+date = driver.find_element_by_xpath('//*[@id="txtDate"]')
+date.send_keys(Keys.BACK_SPACE + Keys.BACK_SPACE + Keys.BACK_SPACE
+               + Keys.BACK_SPACE + Keys.BACK_SPACE + Keys.BACK_SPACE
+               + Keys.BACK_SPACE + Keys.BACK_SPACE + Keys.BACK_SPACE + future + Keys.RETURN)
+
+#button = driver.find_element_by_xpath('//*[@id="day-tog-c"]')
+#button.click()
+
+eva='5980'
+button = driver.find_element_by_xpath('//*[@name="but5980"]')
+button.click()
+
+button = driver.find_element_by_xpath('//*[@id="SubmitEnroll2"]')
+button.click()
+
+
+driver.quit()

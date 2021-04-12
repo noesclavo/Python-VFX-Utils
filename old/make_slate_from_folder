@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+
+import subprocess
+import sys
+import os
+import argparse
+import re
+
+CONV='/usr/local/bin/convert'
+COMP='/usr/local/bin/composite'
+
+class Slate():
+    def __init__(self, folder):
+        self.format = os.path.basename(folder)
+        self.folder = os.path.abspath(folder)
+        print self.format
+        self.get_files()
+
+        self.formats = {
+            # These settings are based off creating the slate bg text with the following command, then repositioning that text in Photoshop
+            # cat slate.txt| convert -background black -fill white -density 72 -font HelveticaNeueLTStd-Hv.otf -interline-spacing 17.5 -pointsize 35 text: -flatten test.png
+            '16x9' : {'res' : '1920x1080', 'ps' : '30', 'ls' : '23', 'geo' : '+480+165'},
+            '9x16' : {'res' : '1080x1920', 'ps' : '20', 'ls' : '17',  'geo' : '+200+718'},
+            '1x1' : {'res' : '1080x1080', 'ps' : '22', 'ls' : '31', 'geo' : '+223+170'},
+            '4x5' : {'res' : '1080x1350', 'ps' : '20', 'ls' : '17',  'geo' : '+200+433'},
+        }
+
+        self.make_black_frame()
+        self.make_slate()
+
+    def get_files(self):
+        self.files = []
+        for file in os.listdir(self.folder):
+            if re.search('.txt$', file):
+                self.files.append(os.path.join(self.folder, file))
+
+    def make_black_frame(self):
+        res = self.formats[self.format]['res']
+
+        cmd = "%s -size %s xc:black /var/tmp/black.png" % (CONV, res)
+        cmd = cmd.split()
+        subprocess.Popen(cmd)
+
+
+    def make_slate(self):
+        from time import sleep
+        for txt in self.files:
+            isci = txt.split('.')[0]
+
+            slate = "%s.png" % os.path.join(self.folder, isci)
+            tmp = "%s_tmp.png" % os.path.join(self.folder, isci)
+
+            os.system("echo %s > /var/tmp/tmp.txt" % tmp)
+            os.system("echo %s >> /var/tmp/tmp.txt" % slate)
+
+            res = self.formats[self.format]['res']
+            line_spacing = self.formats[self.format]['ls']
+            point_size = self.formats[self.format]['ps']
+            geo = self.formats[self.format]['geo']
+
+            cat = subprocess.Popen(['cat', txt], stdout=subprocess.PIPE)
+
+            conv = "%s -background black -fill white -density 72 -font /var/tmp/HelveticaNeueLTStd-Roman.otf -interline-spacing %s -pointsize %s -page %s+10+10 text:- -flatten %s" % (CONV, line_spacing, point_size, res, tmp)
+            subprocess.check_output(conv.split(), stdin=cat.stdout)
+            cat.wait()
+
+            cexec = "%s -compose Screen -geometry %s %s /var/tmp/black.png %s" % (COMP, geo, tmp, slate)
+ 
+            os.system("echo %s >> /var/tmp/tmp.txt" % cexec.split())
+            comp = subprocess.Popen(cexec.split())
+            comp.wait()
+
+            os.unlink(tmp)
+
+            #test the slate placement
+            #composite -compose Screen HUPD0034000H.png parliament_slate_1x1_direct.tif slate.png
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('folder', help='folder(s) with plain text files containing ordered slate information, one slate per file.', nargs='+')
+args = parser.parse_args();
+
+for folder in args.folder:
+    folder = re.sub('/$', '', folder)
+    Slate(folder)
+

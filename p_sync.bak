@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+
+import os
+import argparse
+from watchdog.observers import Observer
+from watchdog.events import (FileSystemEventHandler, PatternMatchingEventHandler)
+from time import sleep
+
+RSYNC = '/usr/bin/rsync'
+RARGS = '-vcr'
+SEQ = '/mnt/storage/jobs/hyundai_211065/sequences/HYN'
+
+class Watch:
+    def __init__(self, path):
+        self.path = path
+        self.pid = os.getpid()
+        self.name = os.path.normpath(__file__)
+
+
+    def run(self):
+        self.observer = Observer()
+
+        event_handler = Handler()
+        self.observer.schedule(event_handler, self.path, recursive=True)
+        self.observer.start()
+
+        file_size = -1
+
+        try:
+            while True:
+                sleep(1)
+        except KeyboardInterrupt:
+            self.observer.stop()
+            print('\nObserver killed: {} [{}]'.format(self.name, self.pid))
+        except IOError as e:
+            self.observer.stop()
+            print(f'Observer Stopped: {e.args[1]}')
+
+        self.observer.join()
+
+
+class Handler(PatternMatchingEventHandler):
+    def __init__(self):
+        super(Handler, self).__init__(ignore_patterns=['*.mp4'])
+
+    def on_created(self, event):
+        import subprocess
+        path = event.src_path
+        if '/LGT/work/maya/images' in path:
+            dest = path.split('/HYN/')[-1]
+            cmd = ['cp', '-rv', path, os.path.join(SEQ, dest)]
+            cp = subprocess.check_output(cmd, universal_newlines=False)
+            print(cp)
+
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--path', help='Directory to watch..', action='store', required=True)
+    args = parser.parse_args()
+
+    path = os.path.normpath(os.path.abspath(args.path))
+
+    watch = Watch(path)
+    watch.run()

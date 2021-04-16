@@ -6,24 +6,32 @@ import sys
 from time import sleep
 import os
 import subprocess
+import signal
 
 from watchdog.observers import Observer
 from watchdog.events import (FileSystemEventHandler, PatternMatchingEventHandler)
 
 m = m_lib.misc.Misc()
+p = m_lib.misc.Print()
+
 
 class Watch(object):
 
     def __init__(self, path):
-        self.path = os.path.normpath(path)
+        self.dl = os.path.normpath(path)
         self.pid = os.getpid()
         self.name = os.path.normpath(__file__)
+        self.pid = os.getpid()
+
 
     def run(self):
-        self.observer = Observer()
+        p.warn('Observer Starting ... ', '. ')
 
-        event_handler = Handler(self.path)
-        self.observer.schedule(event_handler, self.path, recursive=True)
+        self.event_handler = PatternMatchingEventHandler(ignore_directories=True)
+        self.event_handler.on_created = self.on_created
+
+        self.observer = Observer()
+        self.observer.schedule(self.event_handler, self.dl, recursive=True)
         self.observer.start()
 
         file_size = -1
@@ -31,48 +39,53 @@ class Watch(object):
         try:
             while True:
                 sleep(1)
-        except KeyboardInterrupt:
+        except (OSError, ValueError) as e:
+            p.error(f'Error: {sys.exc_info()[0]} : {e.args}', ':')
+            info = sys.exc_info()[1]
+            p.error(f'Error: {info}')
             self.observer.stop()
-            print('\nObserver killed: {} [{}]'.format(self.name, self.pid))
-        except:
-            self.observer.stop()
-            print("Observer Stopped")
+            p.error('Observer Stopped.', '.')
+            sys.exit()
 
         self.observer.join()
 
+    def restart(self):
+        self.observer.stop()
+        p.warn("Restarting Observer... Observer Stopped.", '. ')
+        self.run()
 
-class Handler(PatternMatchingEventHandler):
-
-    def __init__(self, path):
-        #super(Handler, self).__init__(ignore_patterns=['*.mp4'])
-        super(Handler, self).__init__()
-        self.path = path
+    def stop(self):
+        self.observer.stop()
+        p.error('Observer Stopped.', '.')
 
     def on_created(self, event):
         date = m.miles_date()
-        m.mkdir(date)
+        date_dir = os.path.abspath(os.path.join(self.dl, date))
+
+        try:
+            if not os.path.exists(date_dir):
+                m.mkdir(date_dir)
+                p.success(f'Making directory: mkdir({date_dir})', ':')
+        except (OSError, ValueError) as e:
+                info = sys.exc_info()[1]
+                p.error(f'Error: {info}', ':')
+                return
 
         file_size = -1
 
-        while file_size < os.path.getsize(self.path):
-            file_size = os.path.getsize(self.path)
+        while file_size < os.path.getsize(event.src_path):
+            file_size = os.path.getsize(event.src_path)
             sleep(1)
 
-        dl_dir = os.path.join(self.path, date, os.path.basename(event.src_path))
+        dl_dir = os.path.join(date_dir, os.path.basename(event.src_path))
 
         try:
-            print(f'{event.src_path} --> {dl_dir}')
             os.rename(event.src_path, dl_dir)
-        except OSError as e:
-            print("OS Error error({0}): {1}".format(e.errno, e.strerror))
-            raise
-        except IOError as e:
-            print("I/O Error error({0}): {1}".format(e.errno, e.strerror))
-            raise
-        except:
-            print('Unknown Error: Moving {} to {}'.format(event.src_path, dl_dir))
-            raise
-
+            p.success(f'{event.src_path} --> {dl_dir}', '-->')
+        except (OSError, ValueError) as e:
+                info = sys.exc_info()[1]
+                p.error(f'Error: {info}')
+                return
 
 if __name__ == '__main__':
     import argparse
@@ -83,6 +96,24 @@ if __name__ == '__main__':
 
     path = os.path.normpath(os.path.abspath(args.path))
 
-
     watch = Watch(path)
+
+    frame_attributes = ['clear', 'f_back', 'f_builtins', 'f_code', 'f_globals', 'f_lasti', 'f_lineno', 'f_locals', 'f_trace', 'f_trace_lines', 'f_trace_opcodes']
+    def hup_handler(sig_num, frame):
+        print(f'Signal frame f_globals {frame.f_locals}')
+        """
+        for f in frame.f_globals:
+            fg = frame.f_globals[f]
+            print(f'{f} : {fg}')
+        """
+
+        watch.restart()
+
+    def int_handler(sig_num, frame):
+        watch.stop()
+        sys.exit()
+
+    signal.signal(signal.SIGHUP, hup_handler)
+    signal.signal(signal.SIGINT, int_handler)
+
     watch.run()

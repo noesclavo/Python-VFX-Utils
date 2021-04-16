@@ -1,0 +1,15 @@
+Add a new repo from github.com
+
+echo "# Matchbox" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/noesclavo/Matchbox.git
+git push -u origin main
+
+
+update Repo
+git add <directory or file>
+git commit -m "Say something"
+git push -u origin main

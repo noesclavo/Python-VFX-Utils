@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+
+import subprocess
+from sys import argv
+
+cmd = argv[1:]
+print(cmd)
+subprocess.Popen(cmd)

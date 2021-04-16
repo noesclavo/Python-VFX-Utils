@@ -1,61 +1,68 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import os
 import re
 import argparse
+from m_lib import misc
+
+m = misc.Misc()
+p = misc.Print()
+
 
 class LSF(object):
-    def __init__(self, parser):
-        self.dirs = parser.parse_args().directory
-        self.sequences = {};
 
-        for dir in self.dirs:
-            self.parse_directory(dir)
+    def __init__(self, paths):
+        self.paths = paths
+        self.seqs = {}
+        self.seqrx = re.compile(r'(.+)(\.|\_)(\d+)(\.\w+$)')
 
-        self.format_list()
+        self.get_sequences()
+        self.parse_sequence()
 
-    def parse_directory(self, dir):
-        filelist = sorted(os.listdir(dir))
-        for file in filelist:
-            frame = re.search(r'(\d+)([._]*\w+)$', file)
-            if (frame):
-                prefix = file.split(frame.group(0))[0]
-                framenum = frame.group(1)
-                extension = frame.group(2)
+    def get_sequences(self):
+        for path in self.paths:
+            path = os.path.abspath(path)
+            if os.path.isdir(path):
+                files = os.listdir(path)
+                frames = []
+                for file in files:
+                    match = self.seqrx.search(file)
+                    if match:
+                        (name, delimeter, frame, ext) = match.groups()
+                        self.seqs[name] = {
+                            'delimeter': delimeter,
+                            'ext': ext,
+                            'frames': frames,
+                        }
 
-                if prefix in self.sequences:
-                    self.sequences[prefix]['frames'].append(framenum)
+                        self.seqs[name]['frames'].append(int(frame))
+
+    def parse_sequence(self):
+        for seq in self.seqs.keys():
+            frames = sorted(self.seqs[seq]['frames'])
+
+            first_frame = frames[0]
+            last_frame = frames[0]
+            prev_frame = frames[0]
+            index = 1
+
+            while frames[index]:
+                i = 1
+                while frames[index] != prev_frame + i:
+                    i += 1
+                    print(frames[index] + index, 'is missing')
                 else:
-                    self.sequences[prefix] = {}
-                    self.sequences[prefix]['frames'] = [framenum]
-                    self.sequences[prefix]['ext'] = extension
+                    prev_frame = frames[index]
+                    next_frame = frames[index] + 1
+                    index += 1
 
-    def format_list(self):
-        for prefix in self.sequences:
-            extension = self.sequences[prefix]['ext']
-            frames = sorted(self.sequences[prefix]['frames'], key=int)
 
-            pad = len(frames[0]);
-            currframe = frames[0]
-            allframes = '[%d' % int(currframe)
-            lastframe = int(frames[-1])
 
-            for i in frames:
-                d = int(i)
-                if d > int(currframe):
-                    if d - 1 != int(currframe):
-                        allframes = allframes + '-%0*d,%0*d' % (pad, int(currframe), pad, d)
 
-                    currframe = i
 
-                if d == lastframe:
-                    allframes = allframes + '-%0*d]' % (pad, d)
 
-            self.sequences[prefix]['string'] = "%s%s%s" % (prefix, allframes, extension)
-            print self.sequences[prefix]['string']
-
-if __name__ == "__main__":
-    pwd = os.getcwd()
+if __name__ == '__main__':
+    default_dir = os.path.abspath('.')
 
     parser = argparse.ArgumentParser(
         prog='lsf',
@@ -63,6 +70,6 @@ if __name__ == "__main__":
         formatter_class=argparse.RawTextHelpFormatter
     )
 
-    parser.add_argument('directory', nargs='*', help='List of one or more directories to search.\nDefault: %s' % pwd, default=[pwd])
-
-    LSF(parser)
+    parser.add_argument('path', nargs='*', help=f'List of one or more directories to search.\nDefault: {default_dir}', default=[default_dir])
+    args = parser.parse_args();
+    LSF(args.path)

@@ -1,0 +1,959 @@
+Module Text
+Program Flame
+Version 2021.1.1
+FileVersion 4.19999981
+CreationDate Fri Apr 23 08:22:59 2021
+
+FrameWidth 1920
+FrameHeight 1080
+FrameAspectRatio 1.77777779
+
+	CurrentFrame 1001
+	MaxFrames -1
+	AnimRefFrame 1001
+	UpdateMode yes
+	PlayLockMode no
+	UndoLevels 10
+	FieldRenderingModeAuto 2
+	GaussianBlur yes
+	GlobalBlur yes
+	BlurOn no
+	BlurLevel 5
+	AntiAliasingLevel 0
+	AntiAliasingSoftness 2
+	MultiSample 0
+	PreRender 1
+	CropBox no
+	CropLeft 0
+	CropRight 0
+	CropBottom 0
+	CropTop 0
+	MatteKey yes
+End
+NumberOfLayer 1
+
+#
+# text layer channels
+#
+Channel translation/x
+	Extrapolation constant
+	Value -466.152283
+	End
+Channel translation/y
+	Extrapolation constant
+	Value 349
+	End
+Channel translation/speed
+	Extrapolation constant
+	Value 0
+	End
+Channel shear/x
+	Extrapolation constant
+	Value 0
+	End
+Channel shear/y
+	Extrapolation constant
+	Value 0
+	End
+Channel scale/x
+	Extrapolation constant
+	Value 100
+	End
+Channel scale/y
+	Extrapolation constant
+	Value 100
+	End
+Channel rotation
+	Extrapolation constant
+	Value 0
+	End
+ChannelEnd
+TransformHasOffset no
+End
+
+#
+# text layer data
+#
+ExtraChannels
+Channel transparency
+	Extrapolation constant
+	Value 100
+	Uncollapsed
+	End
+ChannelEnd
+BlurShadow no
+BlurShadowFactor 5
+DocWidth 1535
+DocHeight -9.53674316e-07
+LayerAxisLocked no
+DocBackground no
+ColourBack 100 100 100 100
+DocInterpType 4
+FontType 0
+FontName /opt/Autodesk/font/Discreet
+FontSize 22
+UnderlineWidth 50
+FontStyle Fill
+ColourFill 100 100 100 100
+ColourOut 0 0 100 100
+ColourDrop 0 0 0 100
+ColorUnderline 100 100 100 100
+TextLength 1
+Text 73
+FontType 4
+FontName /var/tmp/HelveticaNeueLTStd-Roman.otf
+TextLength 7
+Text 78 78 79 67 69 65 78
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 32.2000427
+	End
+Channel separation
+	Extrapolation constant
+	Value 1
+	End
+Channel 000_<I>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<N>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<N>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<O>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 004_<C>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 005_<E>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 006_<A>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 007_<N>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 21
+Text 72 121 117 110 100 97 105 32 77 111 116 111 114 32 65 109 101 114 105 99 97
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 30.2000427
+	End
+Channel separation
+	Extrapolation constant
+	Value 1
+	End
+Channel 000_<H>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<y>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<u>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<n>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 004_<d>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 005_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 006_<i>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 007_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 008_<M>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 009_<o>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 010_<t>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 011_<o>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 012_<r>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 013_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 014_<A>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 015_<m>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 016_<e>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 017_<r>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 018_<i>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 019_<c>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 020_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 11
+Text 77 89 50 50 32 83 111 110 97 116 97
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 34.2000427
+	End
+Channel 000_<M>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<Y>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 004_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 005_<S>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 006_<o>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 007_<n>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 008_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 009_<t>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 010_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 49
+Text 87 105 110 115 32 69 118 101 114 121 32 84 105 109 101 47 77 89 50 49 32 83 111 110 97 116 97 32 86 83 32 67 97 109 114 121 47 73 110 45 77 97 114 107 101 116 47 49 53
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 33.2000465
+	End
+Channel 000_<W>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<i>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<n>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<s>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 004_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 005_<E>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 006_<v>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 007_<e>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 008_<r>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 009_<y>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 010_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 011_<T>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 012_<i>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 013_<m>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 014_<e>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 015_</>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 016_<M>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 017_<Y>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 018_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 019_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 020_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 021_<S>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 022_<o>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 023_<n>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 024_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 025_<t>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 026_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 027_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 028_<V>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 029_<S>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 030_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 031_<C>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 032_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 033_<m>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 034_<r>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 035_<y>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 036_</>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 037_<I>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 038_<n>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 039_<->/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 040_<M>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 041_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 042_<r>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 043_<k>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 044_<e>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 045_<t>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 046_</>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 047_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 048_<5>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 15
+Text 72 78 77 77 49 48 50 51 48 48 48 72 71 69 78
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 32.2000427
+	End
+Channel 000_<H>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<N>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<M>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<M>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 004_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 005_<0>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 006_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 007_<3>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 008_<0>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 009_<0>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 010_<0>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 011_<H>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 012_<G>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 013_<E>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 014_<N>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 3
+Text 58 49 53
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 32.2000427
+	End
+Channel 000_<:>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<5>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 3
+Text 87 101 98
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 32.2000427
+	End
+Channel 000_<W>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<e>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<b>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 10
+Text 48 52 47 50 49 47 50 48 50 49
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 32.2000427
+	End
+Channel 000_<0>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<4>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_</>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 004_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 005_</>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 006_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 007_<0>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 008_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 009_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 4
+Text 49 54 120 57
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 32.2000427
+	End
+Channel 000_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<6>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<x>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<9>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+TextLength 28
+Text 169 50 48 50 49 32 72 121 117 110 100 97 105 32 77 111 116 111 114 32 65 109 101 114 105 99 97 46
+FontSize 50
+ParagraphType Inside
+
+#
+# layer paragraph channels
+#
+Channel leading
+	Extrapolation constant
+	Value 32.2000427
+	End
+Channel 000_<CHAR>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 001_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 002_<0>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 003_<2>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 004_<1>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 005_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 006_<H>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 007_<y>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 008_<u>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 009_<n>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 010_<d>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 011_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 012_<i>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 013_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 014_<M>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 015_<o>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 016_<t>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 017_<o>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 018_<r>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 019_<SPACE>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 020_<A>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 021_<m>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 022_<e>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 023_<r>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 024_<i>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 025_<c>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 026_<a>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+Channel 027_<.>/attributes/size
+	Extrapolation constant
+	Value 22
+	End
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+ParagraphType Last
+
+#
+# layer paragraph channels
+#
+ChannelEnd
+TransformHasOffset no
+End
+#
+# layer paragraph ruler
+#
+Justification Justify_Left
+LeftMargin 0
+LeftIndent 0
+RightMargin 1535
+End
+EndLayer
+EndGen

@@ -53,6 +53,7 @@ class SlateInfo(object):
                              re.IGNORECASE):
                 continue
 
+
             dir_format = row['format']
             if re.match(r'hd', row['format'], re.IGNORECASE):
                 dir_format = '16x9'

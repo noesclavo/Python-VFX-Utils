@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+import sys
+import time
+import os
+import subprocess
+from m_lib.misc import Print
+
+m = Print()
+
+from watchdog.observers import Observer
+from watchdog.events import (FileSystemEventHandler, PatternMatchingEventHandler)
+
+class Watch(object):
+
+    def __init__(self):
+        self.path = '/mnt/storage/jobs/'
+        self.pid = os.getpid()
+        self.name = os.path.normpath(__file__)
+        self.rsync = '/usr/local/bin/rsync'
+        self.logfile = '/var/tmp/rsync.log'
+        self.src = '/mnt/storage/jobs/'
+        self.dest = '/Volumes/nearline/clients/parliament/'
+        self.rsync = [
+            self.rsync,
+            '-av',
+            f'--log-file={self.logfile}',
+            self.src,
+            self.dest
+        ]
+
+    def run(self):
+        if os.path.isfile(self.logfile):
+            try:
+                os.unlink(self.logfile)
+            except (OSError, ValueError) as e:
+                info = sys.exc_info()[1]
+                m.error(f'Error: {sys.exc_info()[0]}, Removing logfile : {e.args}')
+                m.error(f'Error: {info}')
+                return
+            except RuntimeError as e:
+                info = sys.exc_info()[1]
+                m.error(f'Runtime Error: {sys.exc_info()[0]}, Removing logfile : {e.args}')
+                m.error(f'Runtime Error: {info}')
+                return
+            except:
+                m.error(f'Unknown Error: Removing logfile', ':')
+                return
+
+        self.observer = Observer()
+
+        event_handler = Handler()
+        self.observer.schedule(event_handler, self.path, recursive=True)
+        self.observer.start()
+
+        file_size = -1
+
+        try:
+            while self.observer.is_alive():
+                self.observer.join(1)
+                time.sleep(60)
+        except KeyboardInterrupt:
+            self.observer.stop()
+            print('\nObserver killed: {} [{}]'.format(self.name, self.pid))
+        except (OSError, ValueError) as e:
+            m.error(f'Error: {sys.exc_info()[0]} : {e.args}')
+            info = sys.exc_info()[1]
+            m.error(f'Error: {info}')
+            self.observer.stop()
+            print("Observer Stopped")
+
+        self.observer.join(1)
+
+
+class Handler(PatternMatchingEventHandler):
+    def __init__(self):
+        super(Handler, self).__init__(patterns=['*'], ignore_patterns=['.DS_Store'])
+
+    def on_created(self, event):
+            try:
+                subprocess.Popen(self.rsync)
+            except (OSError, ValueError) as e:
+                info = sys.exc_info()[1]
+                m.error(f'Error: {sys.exc_info()[0]}, {ffprobe}) : {e.args}')
+                m.error(f'Error: {info}')
+                return
+            except RuntimeError as e:
+                info = sys.exc_info()[1]
+                m.error(f'Runtime Error: {sys.exc_info()[0]}, {ffprobe}) : {e.args}')
+                m.error(f'Runtime Error: {info}')
+                return
+            except:
+                m.error(f'Unknown Error -- {ffprobee}', '--')
+                return
+
+
+if __name__ == '__main__':
+    import argparse
+
+    watch = Watch()
+    watch.run()

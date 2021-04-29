@@ -28,32 +28,37 @@ class Watch(object):
         self.observer.schedule(event_handler, self.path, recursive=True)
         self.observer.start()
 
-        file_size = -1
-
         try:
-            while True:
-                time.sleep(1)
+            while self.observer.is_alive():
+                self.observer.join(1)
         except KeyboardInterrupt:
             self.observer.stop()
             print('\nObserver killed: {} [{}]'.format(self.name, self.pid))
-        except:
+        except (OSError, ValueError) as e:
+            m.error(f'Error: {sys.exc_info()[0]} : {e.args}')
+            info = sys.exc_info()[1]
+            m.error(f'Error: {info}')
             self.observer.stop()
             print("Observer Stopped")
 
-        self.observer.join()
+        self.observer.join(1)
 
 
 class Handler(PatternMatchingEventHandler):
     def __init__(self):
-        super(Handler, self).__init__(ignore_patterns=['*.mp4', 'prores', 'h264'])
+        super(Handler, self).__init__(patterns=['*.mov'], ignore_patterns=['*.mp4', '*.wav', '*.mp3', '*aif', '*.aaf', '*.edl'])
 
     def on_created(self, event):
 
         import sys
         import re
         from math import modf
+        from datetime import date
+        from datetime import datetime
 
-        m.success(f'{event.event_type}: {event.src_path}')
+        print()
+        m.warn(datetime.now().strftime('%Y/%m/%d-%H:%M:%S'))
+        m.success(f'New quicktime {event.event_type}: {event.src_path}', ':')
 
         directory = None
         newly_created = event.src_path
@@ -67,22 +72,51 @@ class Handler(PatternMatchingEventHandler):
             mov_filepath = newly_created
             mov_file = os.path.basename(mov_filepath)
             (filename, extension) = os.path.splitext(mov_filepath)
+            (filename, extension) = os.path.splitext(mov_file)
 
             mp4_file = filename + '.mp4'
             mp4_filepath = re.sub(r'.mov$', '.mp4', newly_created)
             mp4_filepath = re.sub(f'{directory}', f'{directory}/h264', mp4_filepath)
 
-            m.warn(f'MOV file: {mov_filepath}')
-            m.warn(f'MP4 file: {mp4_filepath}')
 
             file_size = -1
 
             while file_size < os.path.getsize(mov_filepath):
                 file_size = os.path.getsize(mov_filepath)
-                time.sleep(1)
+                time.sleep(2)
 
-            ffprobe = 'ffprobe -v error  -select_streams v:0 -show_entries stream=width,height -of csv=s=\::p=0 {}'.format(newly_created)
-            size = subprocess.check_output(ffprobe.split(), universal_newlines=True).strip()
+            time.sleep(2)
+            m.success(f'Converting {mov_file} to: {mp4_filepath}', ':')
+
+            ffprobee = 'ffprobe -v error  -select_streams v:0 -show_entries stream=width,height -of csv=s=\::p=0 {}'.format(newly_created)
+            m.warn(f'Executing -- {ffprobee}', '--')
+            ffprobe = [
+                'ffprobe', '-v', 'error',
+                '-select_streams', 'v:0',
+                '-show_entries',
+                'stream=width,height',
+                '-of',
+                'csv=s=\::p=0',
+                f'{newly_created}'
+            ]
+
+            size = 0
+            try:
+                size = subprocess.check_output(ffprobe, universal_newlines=True).strip()
+            except (OSError, ValueError) as e:
+                info = sys.exc_info()[1]
+                m.error(f'Error: {sys.exc_info()[0]}, {ffprobe}) : {e.args}')
+                m.error(f'Error: {info}')
+                return
+            except RuntimeError as e:
+                info = sys.exc_info()[1]
+                m.error(f'Runtime Error: {sys.exc_info()[0]}, {ffprobe}) : {e.args}')
+                m.error(f'Runtime Error: {info}')
+                return
+            except:
+                m.error(f'Unknown Error -- {ffprobee}', '--')
+                return
+
 
             [width, height] = list(map(int, size.split(':')))
             width  = int(modf(width * .667)[-1])
@@ -93,26 +127,34 @@ class Handler(PatternMatchingEventHandler):
             prores_directory = os.path.join(directory, 'prores')
 
             for d in (h264_directory, prores_directory):
-                    if not os.path.isdir(d):
-                        try:
-                            os.mkdir(d, 0o777)
-                        except (OSError, ValueError) as e:
-                            print(f'Error: {sys.exc_info()[0]}, os.mkdir({d}, 0o777) : {e.args}')
-                            info = sys.exc_info()[1]
-                            m.error(f'Error: {info}')
-                            print(f'\tos.mkdir(\n\t\t{d}, 0o777)')
-                            return
+                if not os.path.isdir(d):
+                    try:
+                        os.mkdir(d, 0o777)
+                    except (OSError, ValueError) as e:
+                        print(f'Error: {sys.exc_info()[0]}, os.mkdir({d}, 0o777) : {e.args}')
+                        info = sys.exc_info()[1]
+                        m.error(f'Error: {info}')
+                        print(f'\tos.mkdir(\n\t\t{d}, 0o777)')
+                        return
 
-            print()
             ffmpeg = 'time ffmpeg -v 0 -y -threads 24 -stats -i {0} -vf scale={1} -c:v libx264 -preset veryslow -crf 20 -pix_fmt yuv420p -tune grain {2}'.format(mov_filepath, resolution, mp4_filepath)
+            ffmpeg = [
+                'time', 'ffmpeg', '-v', '0', '-y',
+                '-threads', '24',
+                '-stats',
+                '-i', f'{mov_filepath}',
+                '-vf', f'scale={resolution}',
+                '-c:v', 'libx264', '-preset', 'veryslow', '-crf', '20', '-pix_fmt', 'yuv420p', '-tune', 'grain',
+                f'{mp4_filepath}'
+            ]
+
             try:
-                mp4 = subprocess.check_output(ffmpeg.split(), universal_newlines=True).strip()
+                mp4 = subprocess.check_output(ffmpeg, universal_newlines=True).strip()
                 print(mp4)
             except (OSError, ValueError) as e:
                 m.error(f'Error: {sys.exc_info()[0]}, FFMpeg Conversion Failed) : {e.args}', ':')
                 info = sys.exc_info()[1]
                 m.error(f'Error: {info}', ':')
-
 
             mov_dest = os.path.join(prores_directory, mov_file)
 

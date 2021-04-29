@@ -3,8 +3,13 @@
 class Convert(object):
     def __init__(self, args):
         self.files = args.files
-        self.width = 1
-        self.height = 1
+        self.scale = 1
+
+        if args.scale is not None:
+            if float(args.scale) > 0.0:
+                self.scale = float(args.scale)
+            else:
+                self.scale = 1.0
 
     def convert(self):
         import ffmpeg
@@ -22,11 +27,11 @@ class Convert(object):
                     width = stream['width']
                     height = stream['height']
 
-            width *= .5
-            height *= .5
+            width *= self.scale
+            height *= self.scale
             size = '{0}:{1}'.format(int(width), int(height))
 
-            input = ffmpeg.input(file, loglevel=0)
+            input = ffmpeg.input(file, loglevel=32, threads=24)
             audio = input.audio
             video = input.video.filter(
                 'scale', size=size
@@ -37,7 +42,7 @@ class Convert(object):
                 crf=20,
                 preset='slower',
                 pix_fmt='yuv420p',
-            ).overwrite_output().run()
+            ).overwrite_output().run(capture_stdout=True)
 
 
 if __name__ == '__main__':
@@ -45,6 +50,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('files', help='Video files to be converted..', nargs='+', action='extend')
+    parser.add_argument('-s', '--scale', help='Floating point number to scale the original mov by.', action='store')
 
     c = Convert(parser.parse_args())
     c.convert()

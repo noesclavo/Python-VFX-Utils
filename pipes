@@ -14,4 +14,3 @@ cmd = ii.split()
 print ii
 
 output = subprocess.check_output(cmd, stdin=cat.stdout)
-cat.wait()

@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+import re
+import os
+import subprocess
+import pipes
+import sys
+
+parliament = '/mnt/storage/jobs'
+
+p = pipes.Template()
+
+srcpath = sys.argv[1]
+
+cat = subprocess.Popen(['echo', '-n', srcpath], stdout=subprocess.PIPE)
+tmp = subprocess.check_output('pbcopy', stdin=cat.stdout, shell=True)
+cat.wait()
+
+f = open(os.devnull, 'w')
+proc = subprocess.Popen('pbpaste', stdout=subprocess.PIPE, shell=True)
+#proc = subprocess.Popen('pbpaste', stdout=f)
+f.close()
+
+out = str(proc.communicate()[0])
+out = re.sub(r"(^b|'|'$)", '', out)
+out = re.sub(r'^/', '', out)
+
+#path = re.sub('ftp://ftp.houseofparliament\.com', '/mnt/storage/jobs', out)
+
+path = os.path.join('/mnt/storage/jobs', out)
+cat = subprocess.Popen(['echo', '-n', path], stdout=subprocess.PIPE)
+cat.wait()
+
+tmp = subprocess.check_output('pbcopy', stdin=cat.stdout, shell=True)
+
+#paste = subprocess.Popen(['pbpaste'])
